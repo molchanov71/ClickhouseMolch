@@ -1,14 +1,10 @@
-import csv
-import sqlite3
+import clickhouse_connect
 
 
 def main():
-    con = sqlite3.connect('data.db')
-    cur = con.cursor()
-    with open('kuznetsk_raw_202307251556.csv', mode='r', encoding='utf8') as table:
-        reader = csv.reader(table, delimiter=',')
-        header = next(reader)
-        cur.execute(f'CREATE TABLE t({", ".join(header)})')
+    client = clickhouse_connect.get_client(host='localhost', port=8123)
+    res = client.query('SELECT block_foam_type FROM `default`.NewTable')
+    print(*{tpl[0] for tpl in res.result_rows}, sep='\n')
 
 
 if __name__ == '__main__':
