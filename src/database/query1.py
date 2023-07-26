@@ -1,4 +1,4 @@
-from __init__ import client
+from __init__ import *
 
 
 def get_distinct_foam_types(_client):
