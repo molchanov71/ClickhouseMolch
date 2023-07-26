@@ -1,4 +1,3 @@
-import clickhouse_connect
 from __init__ import client
 
 
