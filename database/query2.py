@@ -27,7 +27,6 @@ def get_foam_in_time(_client):
 
     query_text = f"SELECT * FROM `default`.NewTable WHERE (ts BETWEEN {ts_begin} AND {ts_end}) AND " \
                  f"block_foam_type = '{foam_type}'"
-    print(query_text)
     res = _client.query(query_text)
     print(*('\t'.join(map(str, i)) for i in res.result_rows), sep='\n')
 
