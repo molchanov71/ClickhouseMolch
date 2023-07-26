@@ -1,4 +1,5 @@
-from main import client
+import clickhouse_connect
+from __init__ import client
 
 
 def get_foam_in_time(_client, beg, end, foam_type):
