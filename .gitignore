@@ -2,5 +2,3 @@
 ./__pycache__/
 ./src/database/__pycache__/
 ./src/api/__pycache__/
-./src/api.egg-info/
-./rsc/src.egg-info/
