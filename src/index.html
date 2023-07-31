@@ -24,19 +24,24 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
         <script defer>
             document.addEventListener('DOMContentLoaded', function() {
-                console.log("Page loaded");
                 init();
             });
 
             async function init() 
             {
-                let locations = ['Kuznetsk',];
+                var locations_response = await fetch('/api/locations', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                var locations = await locations_response.json();
                 for (var i = 0; i < locations.length; i++)
                 {
                     let opt = new Option(locations[i], i);
-                    document.getElementById('locations').add(opt, undefined);
+                    var location = locations[i];
+                    await document.getElementById('locations').add(opt, undefined);
                 }
-                let location = locations[0];
                 var types_response = await fetch(`/api/foams/types/?location=${location}`, {
                     method: 'GET',
                     headers: {
@@ -47,7 +52,7 @@
                 for (var i = 0; i < types.length; i++)
                 {
                     let opt = new Option(types[i], i);
-                    document.getElementById('foam-types').add(opt, undefined);
+                    await document.getElementById('foam-types').add(opt, undefined);
                 }
             }
         </script>

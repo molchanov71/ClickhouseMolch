@@ -19,7 +19,7 @@ def get_foams_by_time(location, begin, end, foam_type):
     begin = dt.strptime(begin, FORMAT_LINE_SRC).timestamp()
     end = dt.strptime(end, FORMAT_LINE_SRC).timestamp()
     res = query_get_foams_by_time(location, begin, end, foam_type)
-    return res
+    return JSONResponse(res)
 
 
 @app.post('/api/foams/sort')
@@ -30,6 +30,12 @@ def sort_foams(data=Body()):
     foam = data['foam']
     foams_table = get_foams_by_time(location, begin, end, foam)
     return load(foams_table)
+
+
+@app.get('/api/locations')
+def get_locations():
+    locations_list = query_get_locations()
+    return JSONResponse(locations_list)
 
 
 @app.get('/')
