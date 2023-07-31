@@ -1,4 +1,4 @@
-src/xlsx
-__pycache__
-src/database/__pycache__
-api/__pycache__
+./src/xlsx/
+./__pycache__/
+./src/database/__pycache__/
+./src/api/__pycache__/
