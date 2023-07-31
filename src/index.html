@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+        <title>Небольшой API</title>
+    </head>
+    <body>
+        <h1 align="center">API по базе данных ФомЛайна</h1>
+        <div class="container-sm " style="padding: initial 40%;">
+            <span class="form-label">Площадка</span><br/>
+            <p><select class="form-control" id="locations"></select></p>
+            <div class="row justify-content-start">
+                <div class="col-1"><span class="form-label">Период от</span></div>
+                <div class="col-5"><select class="form-control" id="begin-select"></select></div>
+                <div class="col-1"><span class="form-label">до</span></div>
+                <div class="col-5"><select class="form-control" id="end-select"></select></div>
+            </div><br/>
+            <span class="form-label">Тип пены</span><br/>
+            <p><select class="form-control" id="foam-types"></select></p>
+            <button class="btn btn-primary" onclick="sort()">Отобрать</button>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+        <script defer>
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log("Page loaded");
+                init();
+            });
+
+            async function init() 
+            {
+                let locations = ['Kuznetsk',];
+                for (var i = 0; i < locations.length; i++)
+                {
+                    let opt = new Option(locations[i], i);
+                    document.getElementById('locations').add(opt, undefined);
+                }
+                let location = 'Kuznetsk'
+                var datetimes_response = await fetch(`/api/datetimes?location=${location}`, {
+                    method: "GET",
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                let datetimes = await datetimes_response.json();
+                console.log(datetimes);
+                var begin_select = document.getElementById('begin-select');
+                var end_select = document.getElementById('end-select');
+                for (var i = 0; i < datetimes.length; i += 2)
+                {
+                    var dt = datetimes[i];
+                    var opt1 = new Option(dt, i);
+                    begin_select.add(opt1, undefined);
+                    var opt2 = new Option(dt, i + 1);
+                    end_select.add(opt2, undefined);
+                }
+                var types_response = await fetch(`/api/foams/types/?location=${location}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                let types = await types_response.json();
+                for (var i = 0; i < types.length; i++)
+                {
+                    let opt = new Option(types[i], i);
+                    document.getElementById('foam-types').add(opt, undefined);
+                }
+                console.log('done');
+            }
+        </script>
+        <script>
+            function absolute(rel) {
+                var link = document.createElement("a");
+                link.href = rel;
+                return link.protocol + '//' + link.host + link.pathname;
+            }
+            function sort()
+            {
+                var begin_select = document.getElementById('begin-select');
+                var end_select = document.getElementById('end-select');
+                var location = document.getElementById('locations');
+                var foam = document.getElementById('foam-types');
+                let selected_location = location.options[location.selectedIndex].text;
+                let begin = begin_select.options[begin_select.selectedIndex].text;
+                let end = end_select.options[end_select.selectedIndex].text;
+                let selected_foam = foam.options[foam.selectedIndex].text;
+                let url = new URL(absolute('/api/foams/sort'));
+                var post_response = fetch('/api/foams/sort', {
+                    method: 'POST',
+                    headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        'location': selected_location,
+                        'begin': begin,
+                        'end': end,
+                        'foam': selected_foam
+                    })
+                });
+                console.log(post_response);
+            }
+        </script>
+    </body>
+</html>
