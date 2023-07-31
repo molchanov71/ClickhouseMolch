@@ -1,6 +1,6 @@
 __all__ = [
     'query_get_distinct_foam_types',
-    ''
+    'query_get_foams_by_time'
 ]
 
 from . import client
@@ -17,8 +17,3 @@ def query_get_foams_by_time(loc, beg, end, foam_type):
     if not res:
         return [['' for _ in range(15)]]
     return res
-
-
-def query_get_distinct_ts(loc):
-    res = client.query(f'SELECT DISTINCT ts FROM {loc}.foams').result_rows
-    return [tpl[0] for tpl in res]

@@ -5,7 +5,7 @@ from . import app
 from .load import load
 from .queries import *
 
-FORMAT_LINE = '%d.%m.%Y %H:%M:%S'
+FORMAT_LINE_SRC = '%Y-%m-%dT%H:%M'
 
 
 @app.get('/api/foams/types')
@@ -16,17 +16,10 @@ def get_foam_types(location):
 
 @app.get('/api/foams/by_time')
 def get_foams_by_time(location, begin, end, foam_type):
-    begin = dt.strptime(begin, FORMAT_LINE).timestamp()
-    end = dt.strptime(end, FORMAT_LINE).timestamp()
+    begin = dt.strptime(begin, FORMAT_LINE_SRC).timestamp()
+    end = dt.strptime(end, FORMAT_LINE_SRC).timestamp()
     res = query_get_foams_by_time(location, begin, end, foam_type)
     return res
-
-
-@app.get('/api/datetimes')
-def get_datetimes(location):
-    timestamps = query_get_distinct_ts(location)
-    datetimes = sorted({pydt.strftime(FORMAT_LINE) for pydt in map(dt.fromtimestamp, timestamps)})
-    return JSONResponse(datetimes)
 
 
 @app.post('/api/foams/sort')

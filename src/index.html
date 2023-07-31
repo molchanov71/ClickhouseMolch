@@ -13,9 +13,9 @@
             <p><select class="form-control" id="locations"></select></p>
             <div class="row justify-content-start">
                 <div class="col-1"><span class="form-label">Период от</span></div>
-                <div class="col-5"><select class="form-control" id="begin-select"></select></div>
+                <div class="col-5"><input type="datetime-local" class="form-control" id="begin-date"/></div>
                 <div class="col-1"><span class="form-label">до</span></div>
-                <div class="col-5"><select class="form-control" id="end-select"></select></div>
+                <div class="col-5"><input type="datetime-local" class="form-control" id="end-date"/></div>
             </div><br/>
             <span class="form-label">Тип пены</span><br/>
             <p><select class="form-control" id="foam-types"></select></p>
@@ -36,25 +36,7 @@
                     let opt = new Option(locations[i], i);
                     document.getElementById('locations').add(opt, undefined);
                 }
-                let location = 'Kuznetsk'
-                var datetimes_response = await fetch(`/api/datetimes?location=${location}`, {
-                    method: "GET",
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                let datetimes = await datetimes_response.json();
-                console.log(datetimes);
-                var begin_select = document.getElementById('begin-select');
-                var end_select = document.getElementById('end-select');
-                for (var i = 0; i < datetimes.length; i += 2)
-                {
-                    var dt = datetimes[i];
-                    var opt1 = new Option(dt, i);
-                    begin_select.add(opt1, undefined);
-                    var opt2 = new Option(dt, i + 1);
-                    end_select.add(opt2, undefined);
-                }
+                let location = locations[0];
                 var types_response = await fetch(`/api/foams/types/?location=${location}`, {
                     method: 'GET',
                     headers: {
@@ -67,7 +49,6 @@
                     let opt = new Option(types[i], i);
                     document.getElementById('foam-types').add(opt, undefined);
                 }
-                console.log('done');
             }
         </script>
         <script>
@@ -78,13 +59,13 @@
             }
             function sort()
             {
-                var begin_select = document.getElementById('begin-select');
-                var end_select = document.getElementById('end-select');
                 var location = document.getElementById('locations');
                 var foam = document.getElementById('foam-types');
+                var begin = document.getElementById('begin-date');
+                var end = document.getElementById('end-date');
                 let selected_location = location.options[location.selectedIndex].text;
-                let begin = begin_select.options[begin_select.selectedIndex].text;
-                let end = end_select.options[end_select.selectedIndex].text;
+                let begin_date = begin.value;
+                let end_date = end.value;
                 let selected_foam = foam.options[foam.selectedIndex].text;
                 let url = new URL(absolute('/api/foams/sort'));
                 var post_response = fetch('/api/foams/sort', {
@@ -92,12 +73,11 @@
                     headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         'location': selected_location,
-                        'begin': begin,
-                        'end': end,
+                        'begin': begin_date.toString(),
+                        'end': end_date.toString(),
                         'foam': selected_foam
                     })
                 });
-                console.log(post_response);
             }
         </script>
     </body>
