@@ -1,3 +1,8 @@
+__all__ = [
+    'query_get_distinct_foam_types',
+    ''
+]
+
 from . import client
 
 
